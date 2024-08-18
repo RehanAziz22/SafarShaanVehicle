@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "11304946307",
+    "project_id": "fyp-smiu",
+    "storage_bucket": "fyp-smiu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:11304946307:android:ea02b0537b974a53a929b6",
+        "android_client_info": {
+          "package_name": "com.safarshaan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "11304946307-jbjbabbfmp2ca0hffha51n23ldnqj487.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.safarshaan",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "11304946307-m16eeh9rgsm8kbtai0p4u4qspom1c0tb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD041l6R8_o4FLEiPzyUFRdR1-dqvjrtKw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "11304946307-m16eeh9rgsm8kbtai0p4u4qspom1c0tb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
