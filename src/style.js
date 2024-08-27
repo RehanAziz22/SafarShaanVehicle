@@ -80,7 +80,7 @@ const styling = {
   },
   AppBg1: {
     backgroundColor: AppColorDark,
-  }, 
+  },
   AppBg2: {
     backgroundColor: AppColorLight,
   },
@@ -357,6 +357,11 @@ const styling = {
   w100: {
     width: "100%",
   },
+  w95: {
+    width: "95%",
+  }, w90: {
+    width: "90%",
+  },
   w75: {
     width: "75%",
   },
@@ -387,6 +392,12 @@ const styling = {
   w20: {
     width: "20%",
   },
+  w15: {
+    width: "15%",
+  },
+  w10: {
+    width: "10%",
+  },
   h100: {
     height: "100%",
   },
@@ -416,6 +427,15 @@ const styling = {
   h20: {
     height: "20%",
   },
+  h15: {
+    height: "15%",
+  },
+  h10: {
+    height: "10%",
+  },
+  h5: {
+    height: "5%",
+  },
   fs: {
     fontSize: 16,
   },
@@ -440,23 +460,23 @@ const styling = {
   main: {
     flex: 1,
   },
-  otpView:{
+  otpView: {
     width: "100%",
     justifyContent: "center",
-    alignItems:"center",
+    alignItems: "center",
     flexDirection: "row",
-    marginTop:50,
+    marginTop: 50,
   },
-  otpInput:{
-    width:50,
-    height:50,
-    borderWidth:1,
-    borderRadius:10,
-    marginHorizontal:10,
-    textAlign:"center",
-    fontSize:22,
-    fontWeight:'700',
-    color:_black
+  otpInput: {
+    width: 50,
+    height: 50,
+    borderWidth: 1,
+    borderRadius: 10,
+    marginHorizontal: 10,
+    textAlign: "center",
+    fontSize: 22,
+    fontWeight: '700',
+    color: _black
   },
   input: {
     height: "auto",
@@ -507,7 +527,7 @@ const styling = {
     },
     shadowOpacity: 0.32,
     shadowRadius: 5.46,
-alignItems:"center",
+    alignItems: "center",
     elevation: 9,
   },
   link: {
@@ -956,7 +976,7 @@ alignItems:"center",
     marginBottom: 15,
     textAlign: 'center',
   },
-  AppColorDark:AppColorDark,
+  AppColorDark: AppColorDark,
   _dark: _dark,
   _light: _light,
   _success: _success,

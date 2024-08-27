@@ -5,20 +5,26 @@ import { NavigationContainer } from '@react-navigation/native'
 import Splash from './normal/Splash'
 import Parent from './normal/Parent'
 import Login from './normal/Login'
-import Signup from './normal/SignUp'
+import Signup from './normal/RideEndScreen'
 import OTPScreen from './normal/QRScreen'
 import ChooseLocation from './normal/ChooseLocation'
 import EditName from './nestedScreens/EditName'
 import CreatePin from './normal/CreatePin'
 import QRScreen from './normal/QRScreen'
-
+import RideEndScreen from './normal/RideEndScreen'
+import { useSelector } from 'react-redux';
 
 const Stack = createStackNavigator()
 
 const AppNavigator = () => {
+
+    // Access the bike state from Redux store
+    const bike = useSelector(state => state.bike);
     return (
         <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator 
+             initialRouteName={bike ? 'QRScreen' : 'Splash'}
+             >
                 <Stack.Screen
                     name='Splash'
                     component={Splash}
@@ -40,8 +46,8 @@ const AppNavigator = () => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                    name='Signup'
-                    component={Signup}
+                    name='RideEndScreen'
+                    component={RideEndScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen

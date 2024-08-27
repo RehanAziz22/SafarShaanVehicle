@@ -1,4 +1,4 @@
-import { View, Text, Image, ActivityIndicator } from 'react-native'
+import { View, Text, Image, ActivityIndicator, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import styles from '../style'
 import { useSelector } from 'react-redux'
@@ -6,26 +6,30 @@ import axios from 'axios'
 import { BASE_URL } from '../../config'
 
 const Splash = ({ navigation }) => {
-  
+  const bike = useSelector(state => state.bike);
   const [bikes, setBikes] = useState([]);
   let [isloading, setLoader] = useState(false)
   let [error, setError] = useState()
 
+  const fetchBikes = async () => {
+    setError(null)
+    setLoader(true);
+    axios.get(`${BASE_URL}bikes`, { timeout: 10000 })
+      .then((response) => {
+        setBikes(response.data);
+        // console.log(response.data);
+        navigation.navigate(bike ? 'QRScreen' : 'Login', bike ? { bike: bike } : { bikes: response.data });
+        // navigation.navigate('RideEndScreen', { bikes: response.data });
+        console.log("navigated")
+        setLoader(false);
+        setError('')
+
+      }).catch((error) => {
+        setError(error || "Error fetching bikes:");
+        setLoader(false);
+      });
+  }
   useEffect(() => {
-    const fetchBikes = async () => {
-      setLoader(true);
-      axios.get(`${BASE_URL}bikes`,{ timeout: 10000 })
-        .then((response) => {
-          setBikes(response.data);
-          // console.log(response.data);
-          navigation.navigate('Login', { bikes: response.data });
-          console.log("navigated")
-          setLoader(false);
-        }).catch((error) => {
-          setError(error || "Error fetching bikes:");
-          setLoader(false);
-        });
-    };
     fetchBikes()
     // setTimeout(() => {
     //   if (!data == {}) {
@@ -47,8 +51,11 @@ const Splash = ({ navigation }) => {
       <Text style={[styles.textBlack, styles.textBold, styles.fs5, styles.mt2, styles.w50, styles.textCenter]}>book your bike and
         you are ready to go!</Text>
 
+      {/* {error && } */}
       <Text style={[styles.textDanger, styles.textBold, styles.fs5, styles.mt2, styles.w50, styles.textCenter]}>
-        {isloading ? <ActivityIndicator color={styles._info} size={"small"} /> : "Error Fetching Bikes"}
+        {isloading ? <ActivityIndicator color={styles._info} size={"small"} /> : <TouchableOpacity onPress={fetchBikes} style={[styles.AppBg1, styles.w90, styles.btn, styles.my2]}>
+          <Text style={[styles.textBold, styles.textWhite, styles.fs4]}>Fetch Again</Text>
+        </TouchableOpacity>}
       </Text>
 
     </View>

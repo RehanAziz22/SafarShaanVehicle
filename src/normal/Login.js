@@ -15,8 +15,8 @@ import imagePath from '../constants/imagePath';
 export default function Login({ navigation, route }) {
   const dispatch = useDispatch();
   const [bikes, setBikes] = useState(route.params?.bikes || []); // Accessing bikes from route.params
-  const [plateNo, setPlateNo] = useState('TRQ-010');
-  const [password, setPassword] = useState('TRQ-010');
+  const [plateNo, setPlateNo] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setLoader] = useState(false);
   const [error, setError] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -172,7 +172,8 @@ export default function Login({ navigation, route }) {
             currentLocation.longitude
           ]
         },
-        status: "active", // Additional fields can be added as required
+        status: "avaliable",
+        markerVisible:true // Additional fields can be added as required
       };
 
       axios
