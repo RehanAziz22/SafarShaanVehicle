@@ -1,4 +1,4 @@
-package com.safarshaan
+package com.urridevehicle
 
 import android.app.Application
 import com.facebook.react.PackageList

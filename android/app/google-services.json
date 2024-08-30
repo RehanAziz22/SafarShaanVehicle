@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:11304946307:android:ea02b0537b974a53a929b6",
         "android_client_info": {
-          "package_name": "com.safarshaan"
+          "package_name": "com.urridevehicle"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "11304946307-jbjbabbfmp2ca0hffha51n23ldnqj487.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.safarshaan",
+            "package_name": "com.urridevehicle",
             "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },

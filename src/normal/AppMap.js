@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getDistance } from 'geolib';
 import styles from '../style';
 import axios from 'axios';
+import { BASE_URL } from '../../config';
 
 
 export default function AppMap() {
@@ -29,7 +30,8 @@ export default function AppMap() {
   // let dispatch = useDispatch()
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedBike, setSelectedBike] = useState(null);
-  const [isLoading, setLoader] = useState(false);
+    const [error, setError] = useState()
+    const [isLoading, setLoader] = useState(false);
   const [rideEndObj, setRideEndObj] = useState();
 
   // Add start and end time states
@@ -44,8 +46,8 @@ export default function AppMap() {
   const [bikeSpeed, setBikeSpeed] = useState(0);
   const [rideTime, setRideTime] = useState(0); // State to track ride time
   const [fare, setFare] = useState(0); // State to track fare charges
-  let farePerMin=0;
-  let farePerKm=0;
+  let farePerMin = 0;
+  let farePerKm = 0;
   // console.log(bike, "bike from redux")
   const [state, setState] = useState({
     pickuplocationCords: {
@@ -80,24 +82,29 @@ export default function AppMap() {
       setRideTime(elapsedMinutes);
       let fareChargesMin = calFarePerMin(elapsedMinutes);
       farePerMin = fareChargesMin
-      
+
     }, 60000);
 
     // Set up an interval to call the function every 10 seconds
     const locationIntervalId = setInterval(() => {
       getLiveLocation();
-      console.log(farePerKm + farePerMin, "=======================")
-      let totalFare = farePerKm + farePerMin 
+      // console.log(farePerKm + farePerMin, "=======================")
+      let totalFare = farePerKm + farePerMin
       setFare(totalFare.toFixed(0));
       // getCurrentLocation()
+      // checkRideStatus()
     }, 10000);
+
+    const rideStatusId = setInterval(() => {
+      checkRideStatus()
+    }, 5000);
 
     const getLocationAddress = async () => {
       try {
         const response = await axios.get(`https://api.geoapify.com/v1/geocode/reverse?lat=${pickuplocationCords.latitude}&lon=${pickuplocationCords.longitude}&apiKey=c62a11476cdf4d0b8da38ef393c421bc`);
         const properties = response.data.features[0].properties;
         setPickupAddress(properties.formatted); // Set the formatted address
-        console.log(properties, "Pickup Location properties");
+        // console.log(properties, "Pickup Location properties");
       } catch (error) {
         if (error.response) {
           console.error("Error response:", error.response.data);
@@ -116,9 +123,25 @@ export default function AppMap() {
     return () => {
       clearInterval(timeIntervalId);
       clearInterval(locationIntervalId);
+      clearInterval(rideStatusId)
     };
   }, []);
 
+  const checkRideStatus = () => {
+    axios.get(`${BASE_URL}bike/${bike._id}`)
+      .then((response) => {
+        const { success, data } = response.data;
+        // console.log(response)
+        if (success) {
+          if (!data.rideStartEnd) {
+            endRide(); // Start ride if rideStartEnd is true
+          }
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching bike status AppMap:", error);
+      });
+  };
 
   const onPressLocation = () => {
     navigation.navigate('chooseLocation')
@@ -148,6 +171,31 @@ export default function AppMap() {
       (position) => {
         const { latitude, longitude, speed } = position.coords;
 
+        const objToSend = {
+          location: {
+            coordinates: [
+              latitude,
+              longitude,
+            ]
+          },
+        };
+
+        axios
+          .patch(`${BASE_URL}bike/status-location/${bike._id}`, objToSend)
+          .then((response) => {
+            const { success, message, data } = response.data;
+            if (success) {
+              console.log("=============================================> status updated AppMapScreen")
+            } else {
+              setError(message);
+            }
+            setLoader(false);
+          })
+          .catch((error) => {
+            console.error(error);
+            setError("An error occurred while updating the bike status and location.");
+            setLoader(false);
+          });
         // Update currentLocation state
         setCurrentLocation({
           latitude,
@@ -202,40 +250,62 @@ export default function AppMap() {
   };
 
 
+  // const endRide = () => {
+
+  //   const end = Date.now();
+  //   setEndTime(end);
+
+  //   let fuelConsumed = distanceKm / bike.fuelEfficiency; // Fuel consumed in liters
+  //   let remainingFuel = (bike.fuelLevel / 100) * bike.fuelTankCapacity - fuelConsumed; // Remaining fuel in liters
+  //   let updatedFuelLevel = (remainingFuel / bike.fuelTankCapacity) * 100; // Convert to percentage
+
+  //   // Update fuel consumption record
+  //   let fuelConsumptionEntry = {
+  //     fuelLevel: updatedFuelLevel.toFixed(2) // Round to 2 decimal places
+  //   };
+
+  //   let rideDetails = {
+  //     fare,
+  //     rideTime,
+  //     distanceKm,
+  //     pickupAddress,
+  //     currentLocation,
+  //     _id: bike._id,
+  //     startTime,
+  //     endTime: end,
+  //     fuelLevel: updatedFuelLevel,
+  //     fuelConsumption: fuelConsumptionEntry,
+  //     pickuplocationCords,
+  //     rentedBy: bike.rentedBy
+  //   }
+
+
+  //   console.log("=========================navigating to RideEndScreen",rideDetails, "======================ride details before push clear")
+  //   if (rideDetails) {
+  //     navigation.replace("RideEndScreen", { rideDetails: rideDetails })
+  //   }
+  // }
+
   const endRide = () => {
-
     const end = Date.now();
-    setEndTime(end);
-
-    let fuelConsumed = distanceKm / bike.fuelEfficiency; // Fuel consumed in liters
-    let remainingFuel = (bike.fuelLevel / 100) * bike.fuelTankCapacity - fuelConsumed; // Remaining fuel in liters
-    let updatedFuelLevel = (remainingFuel / bike.fuelTankCapacity) * 100; // Convert to percentage
-
-    // Update fuel consumption record
-    let fuelConsumptionEntry = {
-      fuelLevel: updatedFuelLevel.toFixed(2) // Round to 2 decimal places
-    };
-
+    //   setEndTime(end);
     let rideDetails = {
-      fare,
-      rideTime,
-      distanceKm,
-      pickupAddress,
-      currentLocation,
-      _id: bike._id,
-      startTime,
-      endTime: end,
-      fuelLevel: updatedFuelLevel,
-      fuelConsumption: fuelConsumptionEntry,
-      pickuplocationCords,
-      rentedBy:bike.rentedBy
-    }
+          fare,
+          rideTime,
+          distanceKm,
+          pickupAddress,
+          currentLocation,
+          _id: bike._id,
+          startTime,
+          endTime: end,
+          // fuelLevel: updatedFuelLevel,
+          // fuelConsumption: fuelConsumptionEntry,
+          pickuplocationCords,
+          rentedBy: bike.rentedBy
+        }
+        console.log(rideDetails)
 
-
-    console.log(rideDetails, "======================ride details before push clear")
-    if (rideDetails) {
-      navigation.navigate("RideEndScreen", { rideDetails: rideDetails })
-    }
+    navigation.replace("RideEndScreen",{rideDetails})
   }
 
   // Function to open & close the modal
@@ -339,9 +409,9 @@ export default function AppMap() {
       </View>
 
 
-      <TouchableOpacity onPress={endRide} style={[styles.w95, styles.btn, styles.bgDanger,]}>
+      {/* <TouchableOpacity onPress={endRide} style={[styles.w95, styles.btn, styles.bgDanger,]}>
         <Text style={[styles.textBold, styles.textWhite, styles.fs4]}>{isLoading ? <ActivityIndicator color={styles._white} size={"small"} /> : "End Ride"}</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
 
     </View>

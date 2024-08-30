@@ -26,6 +26,7 @@ const Splash = ({ navigation }) => {
 
       }).catch((error) => {
         setError(error || "Error fetching bikes:");
+        // navigation.navigate('RideEndScreen');
         setLoader(false);
       });
   }
@@ -45,7 +46,7 @@ const Splash = ({ navigation }) => {
     <View style={[styles.flexCenter, styles.bgWhite, styles._black, styles.textBlack, styles.w100, styles.h100]}>
       <Image source={{ uri: "https://thumbs.dreamstime.com/b/classic-blue-speed-motorcycle-travel-adventure-vector-illustration-vehicle-motorbike-design-label-emblem-flat-225428982.jpg" }} style={{ width: 300, height: 300 }} />
       <View style={[styles.flexRow, styles.alignItemsCenter, styles.justifyContentBetween]}>
-        <Text style={[styles.textAppColor, styles.fs1, styles.textBold, styles.textCenter]}>Saffar Shaan</Text>
+        <Text style={[styles.textAppColor, styles.fs1, styles.textBold, styles.textCenter,{fontSize:50}]}>URRIDE</Text>
         {/* <Icon color={styles._danger} size={40} style={[styles.mx1]} name="airport-shuttle"/> */}
       </View>
       <Text style={[styles.textBlack, styles.textBold, styles.fs5, styles.mt2, styles.w50, styles.textCenter]}>book your bike and
