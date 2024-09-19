@@ -1,4 +1,4 @@
-import { View, Text, ToastAndroid, ActivityIndicator } from 'react-native'
+import { View, Text, ToastAndroid, ActivityIndicator, BackHandler } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import styles from '../style'
 import { Image } from 'react-native'
@@ -30,8 +30,13 @@ const RideEndScreen = ({ route, navigation }) => {
     const navigationIntervalId = setInterval(() => {
       completeRide();
     }, 10000);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      // Handle the back button press, do nothing
+      return true; // This disables the back button
+    });
     return () => {
       clearInterval(navigationIntervalId);
+      backHandler.remove();
     };
 
 

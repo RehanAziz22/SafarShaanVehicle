@@ -27,6 +27,7 @@ const Splash = ({ navigation }) => {
       }).catch((error) => {
         setError(error || "Error fetching bikes:");
         // navigation.navigate('RideEndScreen');
+        console.log(error)
         setLoader(false);
       });
   }

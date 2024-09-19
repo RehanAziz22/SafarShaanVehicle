@@ -1,5 +1,5 @@
 import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
-import { Alert, Button, Image, Modal, PermissionsAndroid, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, BackHandler, Button, Image, Modal, PermissionsAndroid, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useEffect, useRef, useState } from 'react';
 import Geolocation from 'react-native-geolocation-service';
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -82,7 +82,7 @@ export default function AppMap() {
       setRideTime(elapsedMinutes);
       let fareChargesMin = calFarePerMin(elapsedMinutes);
       farePerMin = fareChargesMin
-
+      recenterMap()
     }, 60000);
 
     // Set up an interval to call the function every 10 seconds
@@ -120,10 +120,16 @@ export default function AppMap() {
     // let pickupAddress = getLocationAddress(pickuplocationCords.latitude, pickuplocationCords.longitude);
     // setPickupAddress(pickupAddress)
     // Clean up intervals when the component unmounts
-    return () => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      // Handle the back button press, do nothing
+      return true; // This disables the back button
+    });
+     return () => {
       clearInterval(timeIntervalId);
       clearInterval(locationIntervalId);
       clearInterval(rideStatusId)
+      backHandler.remove(); // Clean up the back handler
+
     };
   }, []);
 
@@ -304,6 +310,8 @@ export default function AppMap() {
           rentedBy: bike.rentedBy
         }
         console.log(rideDetails)
+        fetch('http://hcku.c1.biz/bikecontrol/?cmd=true')
+        // axios.get('http://hcku.c1.biz/bikecontrol/?cmd=false')
 
     navigation.replace("RideEndScreen",{rideDetails})
   }
@@ -349,7 +357,7 @@ export default function AppMap() {
     {/* <ToggleDrawerButton /> */}
 
     {/* Recenter Button */}
-    <TouchableOpacity onPress={() => recenterMap()} style={[mapStyles.btn, { zIndex: 1, bottom: 350, right: 20, }]}>
+    <TouchableOpacity onPress={() => recenterMap()} style={[mapStyles.btn, { zIndex: 1, bottom: 340, right: 20, }]}>
       <Icon name='my-location' size={30} color={"white"} />
     </TouchableOpacity>
     {/* Speed */}

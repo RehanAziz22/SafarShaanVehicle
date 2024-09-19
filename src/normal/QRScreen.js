@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator, ToastAndroid } from 'react-native'
+import { View, Text, ActivityIndicator, ToastAndroid, BackHandler } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import styles from '../style'
 import QRCode from 'react-native-qrcode-svg'
@@ -20,10 +20,10 @@ const QRScreen = ({ navigation, route }) => {
     const getbike = useSelector((state) => {
         return state.bike;
     })
-    console.log(getbike, "=======QRScreen")
-    
+    // console.log(getbike, "=======QRScreen")
+
     useEffect(() => {
-        
+
         setError(null); // Reset error state before making the call
         // Function to check bike status every 10 seconds
         const intervalId = setInterval(() => {
@@ -35,11 +35,18 @@ const QRScreen = ({ navigation, route }) => {
             }
         }, 5000); // 10 seconds
         setBike(getbike)
-        
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            // Handle the back button press, do nothing
+            return true; // This disables the back button
+        });
+
         // Clear interval on component unmount
-        return () => clearInterval(intervalId);
+        return () => {
+            clearInterval(intervalId);
+            backHandler.remove();
+        }
     }, []);
-    
+
     const getLiveLocation = async () => {
         let res = await getCurrentLocation()
     }
@@ -71,7 +78,7 @@ const QRScreen = ({ navigation, route }) => {
                     .then((response) => {
                         const { success, message, data } = response.data;
                         if (success) {
-                            console.log("=============================================> status updated qrsCREEN")
+                            // console.log("=============================================> status updated qrsCREEN")
                         } else {
                             setError(message);
                         }
@@ -120,9 +127,23 @@ const QRScreen = ({ navigation, route }) => {
                                     dispatch(addBike(data));
                                     console.log("======================navigating to App Map========================================", data, "=====> status updated data")
 
-                                    navigation.replace('Parent', { bike: bike });
-                                    setRideStart(true)
-                                    ToastAndroid.show(`qr message ${message}`, ToastAndroid.SHORT);
+                                    // axios.get('http://hcku.c1.biz/bikecontrol/?cmd=true')
+                                    //     .then((getResponse) => {
+                                    //         console.log("GET request successful. Status Code:", getResponse.status); // Log the status code
+                                    //         if (getResponse.status === 200) {
+                                    //             console.log("Switch triggered successfully.");
+                                    //         } else {
+                                    //             console.log("Unexpected status code:", getResponse.status);
+                                    //         }
+                                    //     })
+                                    //     .catch((getError) => {
+                                    //         console.error("Error with GET request:", getError); // Log any errors
+                                    //     });
+                                        // axios.get('http://hcku.c1.biz/bikecontrol/?cmd=true')
+                                        fetch('http://hcku.c1.biz/bikecontrol/?cmd=false')
+                                        navigation.replace('Parent', { bike: bike });
+                                        setRideStart(true)
+                                        ToastAndroid.show(`qr message ${message}`, ToastAndroid.SHORT);
                                 } else {
                                     setError(message);
                                 }
